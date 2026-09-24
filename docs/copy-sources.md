@@ -54,3 +54,38 @@ blocks, and unused draft files. Check titles and numbers against the public pape
 retain experimental scope and limitations, and update this map when claims change.
 Keep research content in `src/data/research.ts`; the homepage and detail page share
 the report title and summary.
+
+## Env-Rethink paper copy (added 2026-09-24)
+
+The second report (`env-rethink-2026`) is backed by the local preprint
+[`env-rethink-paper.pdf`](../public/research/env-rethink-paper.pdf)
+("Breaking the Environment Wall: Evolving LLM Agent Environments for Recursive
+Self-Improvement", 25 pages, no arXiv ID yet — the arXiv button is omitted until
+the paper is submitted). Page numbers below refer to this PDF.
+
+| Website copy | Paper source |
+| --- | --- |
+| Exact title | Title block, p. 1 |
+| 83.9% → 57.6%, 26.3 pp drop; nine configurations, 30 tasks, 1,280 rubric checks | §2.3 / abstract, pp. 1, 4 |
+| Collection Map + Event Log organization | §4, C2, pp. 6–7 |
+| 27B file-verification model, teacher trajectories, selected files + evidence report | §5, C3, pp. 8–9; abstract "(27B post-trained model)" |
+| Event-driven evolution, updated reference outcomes and checks | §6, C4, p. 10 |
+| Mean 59.4% (Qwen3.8-27B) → 72.7% (Env-Rethink); +13.3 pp over Qwen3.8-27B; 3.4–17.8 pp gains across nine models | §7.3.2, p. 13 |
+| 32 of 55 retained Terminal-Bench 2.1 tasks harder in ≥3 of 4 models, ten categories | §7.4, p. 14 |
+
+Evidence boundaries for Env-Rethink copy:
+
+- The 72.7% figure is the mean rubric pass rate over nine downstream models on the
+  30-task Environment-Hard set (1,280 checks each); it is not a per-model guarantee.
+  Per-model gains over Qwen3.8-27B preparation range from 3.4 to 17.8 points.
+- The Clean/Noise motivating comparison (83.9% → 57.6%) is a separate study from
+  the Env-Rethink downstream comparison (57.6% full → 59.4% Qwen → 72.7%
+  Env-Rethink); do not mix their conditions. Note 57.6% appears in both as the
+  Noise mean and the full-environment mean.
+- Terminal-Bench 2.1 evolution results cover 55 of 59 seeds after exclusions,
+  four models, nominal three trials per arm, and native binary task-success
+  scoring; 21 tasks decreased in all four models.
+- The abstract's "over 15.1% rubric pass rate improvement across nine models"
+  refers to the minimum per-model gain over the full-environment condition
+  (8.4–18.5 pp range is over full environments; 3.4–17.8 pp over Qwen3.8-27B).
+  Website copy uses the 59.4% → 72.7% mean comparison to avoid ambiguity.

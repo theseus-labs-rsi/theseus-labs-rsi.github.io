@@ -24,6 +24,8 @@
 
 ## 📰 News
 
+- **[September 24, 2026]** Our paper on evolving LLM agent environments
+  (**Env-Rethink**) was added to the website.
 - **[September 11, 2026]** The Theseus Lab website is now live.
 - **[September 10, 2026]** Our survey on genuine recursive self-improvement was released on arXiv.
 
@@ -76,6 +78,22 @@ Selected findings:
   an object of change.
 
 **Paper:** [arXiv:2609.11873](https://arxiv.org/abs/2609.11873)  
+**Project page:** [theseus-labs-rsi.github.io](https://theseus-labs-rsi.github.io/)
+
+### Breaking the Environment Wall: Evolving LLM Agent Environments for Recursive Self-Improvement
+
+Noisy, version-conflicted file environments degrade state-of-the-art agents from
+**83.9% to 57.6%** mean rubric pass rate. **Env-Rethink** attacks this environment
+wall with three modules: **Collection Map** and **Event Log** organize
+evidence-linked context, a **27B post-trained file-verification model** learns to
+select files and judge source authority, and **event-driven environment
+evolution** generates harder, verifiable task instances under an unchanged
+request. Environments prepared by Env-Rethink raise the mean pass rate to
+**72.7%** across nine downstream models, and on Terminal-Bench 2.1 the evolved
+environments lower success on 32 of 55 retained tasks in at least three of four
+models.
+
+**Paper:** preprint; local PDF available on the website.  
 **Project page:** [theseus-labs-rsi.github.io](https://theseus-labs-rsi.github.io/)
 
 Copy provenance and evidence boundaries are recorded in

@@ -1,11 +1,24 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, ArrowUpRight, Github } from 'lucide-react'
-import { researchItems, surveyContributions, surveyFindings, type ResearchItem } from './data/research'
+import { researchItems, researchDetails, type ResearchItem } from './data/research'
 import CommunityComments from './components/CommunityComments'
 import RoadmapFigure from './components/RoadmapFigure'
 
 const githubUrl = 'https://github.com/theseus-labs-rsi'
-const arxivUrl = 'https://arxiv.org/abs/2609.11873'
+
+type ReportLinks = { slug: string; pdf: string; arxiv?: string }
+
+const reportLinks: Record<string, ReportLinks> = {
+  'rsi-survey-2026': {
+    slug: 'rsi-survey-2026',
+    pdf: './research/2609.11873v1.pdf',
+    arxiv: 'https://arxiv.org/abs/2609.11873',
+  },
+  'env-rethink-2026': {
+    slug: 'env-rethink-2026',
+    pdf: './research/env-rethink-paper.pdf',
+  },
+}
 
 function Brand() {
   return (
@@ -62,8 +75,8 @@ function HeroGraphic() {
 }
 
 function Home() {
-  const report = researchItems[0]
-  const projects = researchItems.slice(1)
+  const report = researchItems.find((item) => item.status === 'published') ?? researchItems[0]
+  const projects = researchItems.filter((item) => item !== report)
 
   return (
     <div className="site-shell">
@@ -85,7 +98,7 @@ function Home() {
               <p className="section-label">LATEST</p>
               <h2 id="reports-title">Featured report</h2>
             </div>
-            <span>01 / 01</span>
+            <span>01 / 02</span>
           </div>
           <article className="report-banner">
             <a className="report-copy" href={`#/research/${report.slug}`}>
@@ -109,8 +122,7 @@ function Home() {
           <div className="project-list">
             {projects.map((project) => <ProjectRow key={project.slug} project={project} />)}
           </div>
-        </section>
-        <CommunityComments />
+        </section>        <CommunityComments />
       </main>
       <Footer />
     </div>
@@ -118,6 +130,7 @@ function Home() {
 }
 
 function ProjectRow({ project }: { project: ResearchItem }) {
+  const published = project.status === 'published'
   return (
     <article className="project-row">
       <span className="project-number">{project.index}</span>
@@ -129,13 +142,20 @@ function ProjectRow({ project }: { project: ResearchItem }) {
         <h3>{project.title}</h3>
         <p>{project.summary}</p>
       </div>
-      <span className="project-status">COMING SOON</span>
+      {published ? (
+        <a className="project-status project-link" href={`#/research/${project.slug}`}>READ REPORT</a>
+      ) : (
+        <span className="project-status">COMING SOON</span>
+      )}
     </article>
   )
 }
 
-function ResearchDetail() {
-  const report = researchItems[0]
+function ResearchDetail({ slug }: { slug: string }) {
+  const report = researchItems.find((item) => item.slug === slug && item.status === 'published') ?? researchItems[0]
+  const links = reportLinks[report.slug]
+  const detail = researchDetails[report.slug]
+  const isSurvey = report.slug === 'rsi-survey-2026'
   return (
     <div className="site-shell detail-shell">
       <Header />
@@ -143,36 +163,38 @@ function ResearchDetail() {
         <a className="back-link" href="#/"><ArrowLeft size={17} aria-hidden="true" /> Back to home</a>
         <article>
           <header className="detail-hero">
-            <p className="section-label">FEATURED REPORT · ARXIV:2609.11873</p>
+            <p className="section-label">{`FEATURED REPORT${links?.arxiv ? ' · ARXIV:2609.11873' : ''}`}</p>
             <h1>{report.title}</h1>
             <p className="detail-lead">{report.summary}</p>
             <div className="detail-actions">
-              <a className="primary-link" href={arxivUrl} target="_blank" rel="noreferrer">View on arXiv <ArrowUpRight size={17} aria-hidden="true" /></a>
-              <a className="secondary-link" href="./research/2609.11873v1.pdf" target="_blank" rel="noreferrer">Read PDF <ArrowUpRight size={17} aria-hidden="true" /></a>
+              {links?.arxiv ? (
+                <a className="primary-link" href={links.arxiv} target="_blank" rel="noreferrer">View on arXiv <ArrowUpRight size={17} aria-hidden="true" /></a>
+              ) : null}
+              <a className={links?.arxiv ? 'secondary-link' : 'primary-link'} href={links?.pdf ?? '#/'} target="_blank" rel="noreferrer">Read PDF <ArrowUpRight size={17} aria-hidden="true" /></a>
             </div>
           </header>
 
           <section className="contributions" aria-labelledby="contributions-title">
             <div><p className="section-label">CONTRIBUTIONS</p><h2 id="contributions-title">What this work contributes</h2></div>
             <ol>
-              {surveyContributions.map((contribution, index) => (
+              {detail.contributions.map((contribution, index) => (
                 <li key={contribution.title}><span>0{index + 1}</span><div><h3>{contribution.title}</h3><p>{contribution.description}</p></div></li>
               ))}
             </ol>
           </section>
 
-          <RoadmapFigure detailed />
+          {isSurvey ? <RoadmapFigure detailed /> : null}
 
           <section className="contributions survey-findings" aria-labelledby="findings-title">
-            <div><p className="section-label">KEY FINDINGS</p><h2 id="findings-title">Insights from the survey</h2></div>
+            <div><p className="section-label">KEY FINDINGS</p><h2 id="findings-title">Insights from the {isSurvey ? 'survey' : 'study'}</h2></div>
             <ol>
-              {surveyFindings.map((finding, index) => (
+              {detail.findings.map((finding, index) => (
                 <li key={finding.title}>
                   <span>0{index + 1}</span>
                   <div>
                     <h3>{finding.title}</h3>
                     <p>{finding.description}</p>
-                    <a className="finding-source" href={`./research/2609.11873v1.pdf#page=${finding.page}`} target="_blank" rel="noreferrer">{finding.source} <ArrowUpRight size={14} aria-hidden="true" /></a>
+                    <a className="finding-source" href={`${links?.pdf}#page=${finding.page}`} target="_blank" rel="noreferrer">{finding.source} <ArrowUpRight size={14} aria-hidden="true" /></a>
                   </div>
                 </li>
               ))}
@@ -213,5 +235,6 @@ export default function App() {
     }
   }, [hash])
 
-  return hash.startsWith('#/research/') ? <ResearchDetail /> : <Home />
+  const detailSlug = hash.startsWith('#/research/') ? decodeURIComponent(hash.slice('#/research/'.length)) : null
+  return detailSlug ? <ResearchDetail slug={detailSlug} /> : <Home />
 }
